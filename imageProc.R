@@ -1,17 +1,64 @@
 source("https://raw.githubusercontent.com/hollorol/funnyR/master/installAndLoad.R")
 
-
-
-if(!is.element("magick",rownames(installed.packages()))){
-    
-}
-install.packages("magick")
-install.packages("imager")
-install.packages("spatial")
-library(microbenchmark)
-
-library(png)
+installAndLoad("imager")
 library(imager)
+library(png)
+
+biColorImage <- function(baseColor=NULL,altColor="brown", alpha=1, inputPicture=NULL, outputPicture=NULL){
+
+    colorTransform <- function(colorName,alpha){
+        splitedColor <- unlist(strsplit(colorName,""))
+        if(splitedColor[1]!="#"){
+            colorName <- c(as.vector(col2rgb(colorName))/255,alpha)
+        } else {
+            splitedColor<-splitedColor[-1]
+            colorName<-tryCatch(c(strtoi(paste0("0x",paste(splitedColor[1:2], collapse = "")))/255,
+                        strtoi(paste0("0x",paste(splitedColor[3:4], collapse = "")))/255,
+                        strtoi(paste0("0x",paste(splitedColor[5:6], collapse = "")))/255,
+                        alpha),error = function (e) {stop("Wrong color name")})
+        }
+        return(colorName)
+    }
+
+    if(is.null(inputPicture)){
+        inputPicture <- file.choose()
+    }
+    if(is.null(outputPicture)){
+        outputPicture <- file.choose()
+    }
+
+    img <- tryCatch(readPNG(inputPicture), error = function (e) {stop(paste0("Cannot find ",inputPicture))})
+    implot <- load.image(inputPicture)
+    plot(implot)
+    sPoint <- locator(1)
+    sPoint <- lapply(sPoint,floor)
+    dev.off()
+    colorOfChoosenPoint <- img[sPoint$y,sPoint$x,]
+    if(is.null(baseColor)){
+        baseColor <- colorOfChoosenPoint
+    } else {
+        baseColor <- colorTransform(baseColor,alpha=alpha)
+    }
+    altColor <- colorTransform(altColor,alpha=alpha)
+    xres <- dim(img)[2]
+    yres <- dim(img)[1]
+    nLayers <- dim(img)[3]
+    for(i in 1:xres){
+        for(j in 1:yres){
+            ## if(length(img[j,i,])!=0){
+            ##     myArray[j,i,] <- img[j,i,]
+            ## }
+            img[j,i,][4] <- 1
+            if(!identical(img[j,i,],colorOfChoosenPoint)){
+                img[j,i,]<- altColor
+            } else {
+                img[j,i,]<- baseColor
+            }
+        }
+    }
+    tryCatch(writePNG(image=img,target=outputPicture), error = function (e) {stop(paste0("Cannot find ", outputPicture))})
+    plot(load.image(outputPicture))
+}
 
 europa <- readPNG("/home/hollorol/Documents/tmp/EuroBase.png")
 im <- load.image("/home/hollorol/Documents/tmp/EuroBase.png")
