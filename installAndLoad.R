@@ -1,4 +1,4 @@
-installOrLoad <- function(packages){
+installAndLoad <- function(packages){
     ##This function installs and loads multiple packages
     loadablePackages <- packages
     sapply(packages, function(x){

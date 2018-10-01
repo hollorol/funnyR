@@ -1,4 +1,4 @@
-
+source("https://raw.githubusercontent.com/hollorol/funnyR/master/installAndLoad.R")
 
 
 
