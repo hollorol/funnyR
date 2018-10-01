@@ -4,7 +4,7 @@ installAndLoad("imager")
 library(imager)
 library(png)
 
-biColorImage <- function(baseColor=NULL,altColor="brown", alpha=1, inputPicture=NULL, outputPicture=NULL){
+biColorImage <- function(baseColor=NULL,altColor="brown", alpha=1, inputPicture=NULL, outputPicture=NULL, selectedColor=NULL, hateMouse=FALSE){
 
     colorTransform <- function(colorName,alpha){
         splitedColor <- unlist(strsplit(colorName,""))
@@ -28,12 +28,18 @@ biColorImage <- function(baseColor=NULL,altColor="brown", alpha=1, inputPicture=
     }
 
     img <- tryCatch(readPNG(inputPicture), error = function (e) {stop(paste0("Cannot find ",inputPicture))})
+    if(!hateMouse){
     implot <- load.image(inputPicture)
     plot(implot)
     sPoint <- locator(1)
     sPoint <- lapply(sPoint,floor)
     dev.off()
-    colorOfChoosenPoint <- img[sPoint$y,sPoint$x,]
+    colorOfChoosenPoint <- img[sPoint$y,sPoint$x,]} else {
+                                                      colorOfChoosenPoint <- tryCatch(colorTransform(selectedColor),
+                                                                                      error = function (e){
+                                                                                          stop("Invalid or missing selectedColor parameter, when hateMouse is not set to true")
+                                                                                      })
+                                                  }
     if(is.null(baseColor)){
         baseColor <- colorOfChoosenPoint
     } else {
