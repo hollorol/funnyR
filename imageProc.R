@@ -35,7 +35,7 @@ biColorImage <- function(baseColor=NULL,altColor="brown", alpha=1, inputPicture=
     sPoint <- lapply(sPoint,floor)
     dev.off()
     colorOfChoosenPoint <- img[sPoint$y,sPoint$x,]} else {
-                                                      colorOfChoosenPoint <- tryCatch(colorTransform(selectedColor),
+                                                      colorOfChoosenPoint <- tryCatch(colorTransform(selectedColor, alpha=1),
                                                                                       error = function (e){
                                                                                           stop("Invalid or missing selectedColor parameter, when hateMouse is not set to true")
                                                                                       })
