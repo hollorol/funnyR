@@ -5,23 +5,23 @@ if(!all(toInstall)){
 }
 
 getCoronaPage <- function(pageNumber){
-    respons <- GET(sprintf("https://koronavirus.gov.hu/elhunytak?page=%s",pageNumber))
-    text_Respons <- content(respons,"text")
+    respons <- httr::GET(sprintf("https://koronavirus.gov.hu/elhunytak?page=%s",pageNumber))
+    text_Respons <- httr::content(respons,"text")
     # converting text_respons to xml
 
     # read_xml(textRespons) is not good, because it is not a valid xml :(
-    xml_Respons <- read_html(text_Respons)
+    xml_Respons <- xml2::read_html(text_Respons)
     # The content contains only one table... <table>...</table>
-    extracted_table<- xml_find_all(xml_Respons,".//table")
+    extracted_table<- xml2::xml_find_all(xml_Respons,".//table")
 
-    korona <- do.call(rbind,lapply(xml_find_all(extracted_table,".//tr"),function(row){
-                                            sapply(xml_find_all(row,".//td"),function(item){
-                                                       trimws(xml_text(item)) 
+    korona <- do.call(rbind,lapply(xml2::xml_find_all(extracted_table,".//tr"),function(row){
+                                            sapply(xml2::xml_find_all(row,".//td"),function(item){
+                                                       trimws(xml2::xml_text(item)) 
                                             })
                                         })
                     )
 
-    colnames(koronaFirst) <- c("id","nem","kor","illnesses")
+    colnames(korona) <- c("id","nem","kor","illnesses")
     korona <- as.data.frame(korona)
     korona$id <- as.integer(unlist(korona[,1]))
     korona$nem <- as.factor(unlist(korona[,2]))
