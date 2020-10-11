@@ -21,12 +21,12 @@ getCoronaPage <- function(pageNumber){
                                         })
                     )
 
-    colnames(koronaFirst) <- c("id","nem","kor","betegségek")
+    colnames(koronaFirst) <- c("id","nem","kor","illnesses")
     korona <- as.data.frame(korona)
     korona$id <- as.integer(unlist(korona[,1]))
     korona$nem <- as.factor(unlist(korona[,2]))
     korona$kor <- as.integer(unlist(korona[,3]))
-    korona$betegségek <- unlist(korona$betegségek)
+    korona$illnesses <- unlist(korona$illnesses)
     korona
 }
 
