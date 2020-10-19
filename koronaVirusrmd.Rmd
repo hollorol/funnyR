@@ -1,0 +1,61 @@
+---
+title: "Korona vírus statistikák Magyarországon"
+author: "Hollós Roland"
+output: "html"
+---
+
+Az alábbi dokumentum forrása a [koronavíris.gov.hu](https://koronavirus.gov.hu/elhunytak). Ezt dolgoztam R-ben (a függvények [itt találhatóak](https://github.com/hollorol/funnyR/blob/master/koronavirus.R)). A jelen weboldal [Rmarkdown](https://rmarkdown.rstudio.com/)-ban íródott, forráskódja [githubon](v) található.
+
+```{r,include=FALSE, message=FALSE, cache=TRUE}
+source("koronavirus.R")
+coronaStats <- getCoronaAll()
+```
+
+Jelenleg (`r format(Sys.time(), "%Y-%m-%d %H:%M")`) a koronavírusnak `r nrow(coronaStats)` áldozata van, ebből `r sum(coronaStats$nem == "Férfi")` férfi és `r sum(coronaStats$nem == "Nő")` nő. Az öt legfiatalabb:
+
+```{r, echo = FALSE}
+knitr::kable(coronaStats[order(coronaStats$kor)[1:5],],col.names=c("Sorszám", "Nem", "Kor", "Alapbetegségek"))
+```
+
+
+```{r, echo=FALSE, message=FALSE, fig.cap=""}
+hist(coronaStats$kor, main="A koronavírus halálos áldozatainak koreloszlása", ylab="Gyakoriság", xlab="Kor")
+```
+
+## Betegségek gyakorisági eloszlása
+
+Felhívnám a figyelmet arra, hogy az alábbi táblázatok közvetlenül értelmezhetetlenek, mivel minden esetben fontos, hogy milyenek az arányok a háttér-populációban. Ha bármi kijelentést is akarunk tenni: például, hogy a *magas vérnyomás növeli a halál kockázatát koronavírus esetén*, igazolnunk kell, hogy a mi mintánkban a véletlennél jóval gyakrabban fordulnak elő magas vérnyomásban szenvedő páciensek. Jelenleg Magyarországon a 4 leggyakoribb krónikus betegség a következő (egyelőre megbízható forrást keresek):
+
+1. Magas vérnyomás
+2. Mozgásszervi rendellenességek
+3. Allergia
+4. Cukorbetegség
+
+Több állapot egyidejű jelenlétét a [komorbiditás](https://doi.org/10.1016/S0895-4356(00)00363-2) fejezi ki. Klinikai kutatók komplex módszereket dolgoztak ki arra, hogy populáció szintű adatokból megbízhatóan tudjunk a komorbiditásra következtetni. Éppen ezért **nem javaslom, hogy bárki a téma alapos és elmélyült tanulmányozása nélkül kijelentéseket tegyen.** (elég volt az önjelölt sarlatánokból)
+
+### 50 év felett
+
+```{r, echo = FALSE}
+tab <- sort(table(trimws(strsplit(paste(coronaStats[coronaStats$kor>50,]$illnesses,
+                                        collapse=","),
+                                  split=",")[[1]])), decreasing=TRUE)[1:5]
+knitr::kable(tab)
+```
+
+### 50 év alatt
+
+```{r, echo = FALSE}
+tab <- sort(table(trimws(strsplit(paste(coronaStats[coronaStats$kor<50,]$illnesses,
+                                        collapse=","),
+                                  split=",")[[1]])), decreasing=TRUE)[1:5]
+knitr::kable(tab)
+
+```
+
+## Összes adat
+
+<div id="myT", style="height: 300px; overflow: hidden; overflow-y: scroll;">
+```{r, echo=FALSE}
+knitr::kable(coronaStats, format="html", table.attr="class=\"table\"", col.names=c("Sorszám", "Nem", "Kor", "Alapbetegségek"))
+```
+</div>
