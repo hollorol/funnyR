@@ -1,12 +1,18 @@
 ---
-title: "Korona vírus statistikák Magyarországon"
+title: "Koronavírus statistikák Magyarországon"
 author: "Hollós Roland"
 output: "html"
 ---
 
-Az alábbi dokumentum forrása a [koronavíris.gov.hu](https://koronavirus.gov.hu/elhunytak). Ezt dolgoztam R-ben (a függvények [itt találhatóak](https://github.com/hollorol/funnyR/blob/master/koronavirus.R)). A jelen weboldal [Rmarkdown](https://rmarkdown.rstudio.com/)-ban íródott, forráskódja [githubon](v) található.
+Az alábbi dokumentum forrása a [koronavíris.gov.hu](https://koronavirus.gov.hu/elhunytak). Ezt dolgoztam R-ben (a függvények [itt találhatóak](https://github.com/hollorol/funnyR/blob/master/koronavirus.R)). A jelen weboldal [Rmarkdown](https://rmarkdown.rstudio.com/)-ban íródott, forráskódja [githubon](https://github.com/hollorol/funnyR/blob/master/koronaVirusrmd.Rmd) található.
 
-```{r,include=FALSE, message=FALSE, cache=TRUE}
+Nem duplikálni szerettem volna az eredeti forrást, sokkal inkább ésszerűbb forrásban megjeleníteni, hogy az együtt elemezhető legyen. Ne kelljen mind a 22 oldalt végigkattintgatni, ha az embernek szüksége van valamilen információra. A forrás programozói sajnálatos módon a felhasználói felületet szépítgették ahelyett, hogy a felhasználói élménnyel bármit is törődtek volna. Mi értelme van például animálni a táblázat betöltődését? Az is elképesztő, hogy a táblázat körülbelül mindent elnyel az oldalon. A helykihasználás több, mint rossz. Ezen változtattam. Habár így 1,5 Mb-osra hízott az oldal, jóval gyorsabban töltődik be és egyszerűbb keresni benne. 
+
+Röviden: szerintem így kellett volna a kormánynak prezentálni az adatokat. A dokumentumot félóránként lefordítom.
+
+## Alap statisztikák
+
+```{r,include=FALSE, message=FALSE}
 source("koronavirus.R")
 coronaStats <- getCoronaAll()
 ```
